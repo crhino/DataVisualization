@@ -2,15 +2,15 @@ class MyNode {
   
   ArrayList children = new ArrayList();
   ArrayList edges = new ArrayList();
-  int id;
+  String id;
   MyCircle circle;
   
-  public MyNode (int ID, MyCircle circ) {
+  public MyNode (String ID, MyCircle circ) {
     id = ID;
     circle = circ;
   }
   
-  public int getID () {return id;}
+  public String getID () {return id;}
   
   public void add_Child (MyNode node, int edge) {
     children.add(node);
