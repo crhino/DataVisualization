@@ -19,7 +19,7 @@ class Tree {
       if (node.id == c.getValue(i, 1)) row = i;
     }
     
-    for (int i = 0; i < c.getRowLength(); i++) {
+    for (int i = 0; i < c.getRowLength(i); i++) {
       if (c.getValue(row, i) == "1") {
         leaf = false;
         temp = new MyNode (c.getValue(1, i), new MyCircle (0, 0, 10, c.getValue(1, i), 0));
