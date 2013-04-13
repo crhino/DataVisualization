@@ -21,7 +21,7 @@ class MyParser {
   }
 
   public int getRowLength(int row) {
-    return values[i].length;
+    return values[row].length;
   }
   
   public int getNumItems() {return numItems;}
