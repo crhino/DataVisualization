@@ -64,6 +64,6 @@ class MyNode {
   
   public ArrayList getEdges() {return edges;}
   public Boolean isBounded() {
-    //Check all circles for Boundedness.
+    return circle.isBounded();
   }
 }
