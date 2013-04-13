@@ -6,7 +6,7 @@ class Tree {
   }
   //Creates the tree heirarchy.
   public createTree (MyParser c) {
-    root = new MyNode(c.getValue(1, 2), new MyCircle (//Add this later.));
+    root = new MyNode(c.getValue(1, 2), new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
     addChildren(root, c);
   }
   
@@ -22,7 +22,7 @@ class Tree {
     for (int i = 0; i < c.getRowLength(); i++) {
       if (c.getValue(row, i) == "1") {
         leaf = false;
-        temp = new MyNode (c.getValue(1, i), new MyCircle (//Add this later));
+        temp = new MyNode (c.getValue(1, i), new MyCircle (0, 0, 10, c.getValue(1, i), 0));
         node.add_Child(temp);
         addChildren (temp, c);
       }
