@@ -16,9 +16,8 @@ class MyNode {
 
   public void isLeaf() {leaf = true;}
   
-  public void add_Child (MyNode node, int edge) {
+  public void add_Child (MyNode node) {
     children.add(node);
-    edges.add(edge);
   }
   
   public void setPos(int x, int y, int r) {
