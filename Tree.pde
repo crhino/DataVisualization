@@ -5,13 +5,13 @@ class Tree {
 
   }
   //Creates the tree heirarchy.
-  public createTree (MyParser c) {
+  public void createTree (MyParser c) {
     root = new MyNode(c.getValue(1, 2), new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
     addChildren(root, c);
   }
   
   //Recursive function that finds and adds children of node.
-  public addChildren (MyNode node, MyParser c) {
+  public void addChildren (MyNode node, MyParser c) {
     int row;
     Boolean leaf = true;
     MyNode temp;
