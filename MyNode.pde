@@ -4,13 +4,17 @@ class MyNode {
   ArrayList edges = new ArrayList();
   String id;
   MyCircle circle;
+  Boolean leaf;
   
   public MyNode (String ID, MyCircle circ) {
     id = ID;
     circle = circ;
+    leaf = false;
   }
   
   public String getID () {return id;}
+
+  public void isLeaf() {leaf = true;}
   
   public void add_Child (MyNode node, int edge) {
     children.add(node);
