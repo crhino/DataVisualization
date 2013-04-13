@@ -12,7 +12,7 @@ class Tree {
   
   //Recursive function that finds and adds children of node.
   public void addChildren (MyNode node, MyParser c) {
-    int row;
+    int row = -1;
     Boolean leaf = true;
     MyNode temp;
     for(int i = 0; i < c.numItems; i++) {
