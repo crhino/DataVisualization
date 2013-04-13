@@ -19,6 +19,10 @@ class MyParser {
   public String getValue(int row, int col) {
     return values[row][col];
   }
+
+  public int getRowLength(int row) {
+    return values[i].length;
+  }
   
   public int getNumItems() {return numItems;}
 }
