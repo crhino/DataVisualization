@@ -32,6 +32,14 @@ class Tree {
 
   //Takes origin (x,y), and returns a Point at dist units away and radians angle in relation.
   public Point makeRay (int x, int y, float dist, float radians) {
-    return new Point(dist*sin(radians), dist*cos(radians));
+    return new Point(x+dist*sin(radians), y+dist*cos(radians));
+  }
+
+  public void render () {
+    root.render();
+  }
+
+  private void renderTree (MyNode node) {
+    
   }
 }
