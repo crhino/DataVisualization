@@ -36,6 +36,7 @@ class Tree {
   }
 
   public void render () {
+    root.setPos(width/2, height/2, 5);
     root.render();
   }
 
