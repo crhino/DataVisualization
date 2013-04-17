@@ -1,13 +1,19 @@
 class Tree {
   MyNode root;
+  MyNode current;
+  int circledist = 50;
   
   public Tree () {
 
   }
   //Creates the tree heirarchy.
-  public void createTree (MyParser c) {
-    root = new MyNode(c.getValue(1, 2), new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
+  public void createTree(MyParser c) {
+    root = new MyNode(c.getValue(1, 2), null, new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
     addChildren(root, c);
+    current = root;
+    
+    ArrayList temp = root.children;
+    current = (MyNode) temp.get(0);
   }
   
   //Recursive function that finds and adds children of node.
@@ -22,25 +28,141 @@ class Tree {
     for (int i = 0; i < c.getRowLength(0); i++) {
       if (c.getValue(row, i).equals("1")) {
         leaf = false;
-        temp = new MyNode (c.getValue(1, i), new MyCircle (0, 0, 10, c.getValue(1, i), 0));
+        temp = new MyNode (c.getValue(1, i), node, new MyCircle (0, 0, 10, c.getValue(1, i), 0));
         node.add_Child(temp);
         addChildren (temp, c);
       }
     }
     if(leaf) node.isLeaf();
   }
-
+  
+  public void printT() {printTree(root);}
+  
+  public void printTree(MyNode node) {
+  if(node.leaf) {
+    println(node.id + "is a leaf node");
+    return;
+  }
+  println(node.getID() + ":");
+  ArrayList temp = node.get_Children();
+  MyNode temp1;
+  println("    Has children:");
+  for(int i = 0; i < temp.size(); i++) {
+    temp1 = (MyNode)temp.get(i);
+    println("      " + temp1.id);
+  }
+  for(int i = 0; i < temp.size(); i++) {
+    printTree((MyNode)temp.get(i));
+  }
+  return;
+  }
+  
+  public void drawConCircles() {
+    MyCircle temp;
+    for(int i = 0; i < 10; i++) {
+      temp = new MyCircle (width/2, height/2, circledist*(10-i), "", 0);
+      temp.render();
+    }
+  }
+  
+  public void setCurrent() {
+    setCurrentR (root);
+  }
+  
+  private void setCurrentR (MyNode node) {
+    if (node.isBounded ()) {
+      current = node;
+      return;
+    }
+    if (node.leaf) return;
+    ArrayList temp = node.children;
+    MyNode temp1;
+    for(int i = 0; i < temp.size(); i++) {
+      temp1 = (MyNode) temp.get(i);
+      setCurrentR(temp1);
+    }
+  }
+  
+  public Boolean NodesBounded () {
+    return checkNodes(root);
+  }
+  
+  private Boolean checkNodes(MyNode node) {
+    if(node.isBounded()) return true;
+    if(node.leaf) return false;
+    ArrayList temp = node.children;
+    MyNode temp1;
+    for(int i = 0; i < temp.size(); i++) {
+      temp1 = (MyNode) temp.get(i);
+      if (checkNodes(temp1)) return true;
+    }
+    return false;
+  }
+  
   //Takes origin (x,y), and returns a Point at dist units away and radians angle in relation.
   public Point makeRay (int x, int y, float dist, float radians) {
-    return new Point(x+dist*sin(radians), y+dist*cos(radians));
+    return new Point((int)(x+dist*cos(radians)), (int)(y+dist*sin(radians)));
+  }
+  
+  public void resetVisited(MyNode node) {
+    if(node.leaf) return;
+    node.setVisited(false);
+    ArrayList temp = node.children;
+    for(int i = 0; i < temp.size(); i++) {
+      resetVisited((MyNode) temp.get(i));
+    }
   }
 
   public void render () {
-    root.setPos(width/2, height/2, 5);
-    root.render();
+    current.setPos(width/2, height/2, 5);
+    root.setColor(0, 0, 200);
+    renderTree(current, 0, 2*PI, circledist);
+    resetVisited(root);
+    println("START:");
   }
 
-  private void renderTree (MyNode node) {
-    
+  private void renderTree (MyNode node, float radianstart, float radianend, int nodedist) {
+    if (node.leaf) return;
+    node.setVisited(true);
+    MyNode temp;
+    Point point;
+    int count = 0;
+    Boolean remove = false;
+    println ("Node ID: " + node.id);
+    ArrayList children = node.children;
+    if(node.parent != null) { println("HAS PARENT");
+      if(node.parent.visited == false) {
+        println("INSIDE");
+        remove = true;
+        children.add(node.parent);
+      }
+    }
+    for(int i = 0; i < children.size(); i++) {
+      temp = (MyNode) children.get(i);
+      if(temp.visited) count++;
+    }
+    float radianspace = (radianend - radianstart)/(children.size()-count);
+    float theta = radianstart + radianspace/2;
+    count = 0;
+    //println("Radian field: " + radianspace);
+    for(int i = 0; i < children.size(); i++) {
+      temp = (MyNode) children.get(i);
+      if(temp.visited) {
+        count++;
+        continue;
+      }
+      point = makeRay (width/2, height/2, nodedist, theta);
+      temp.setPos(point.x, point.y, 5);
+      line(node.getX(), node.getY(), temp.getX(), temp.getY());
+      temp.render();
+      renderTree (temp, radianstart+((i-count)*radianspace), radianstart + ((i-count+1)*radianspace), nodedist+circledist);
+      theta = theta + radianspace;
+    }
+    if(remove) {
+    println("SIZE: " + children.size());
+    children.remove(node.parent);
+    println("SIZE: " + children.size());
+    }
+    node.render();
   }
 }
