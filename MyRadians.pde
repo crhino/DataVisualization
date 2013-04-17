@@ -1,10 +1,5 @@
 class MyRadians {
 
-  class Point {
-    int x, y;
-    public Point(int a, int b)) {x = a; y = b;}
-  }
-
   public MyRadians () {
 
   }
@@ -25,6 +20,6 @@ class MyRadians {
 
     }
 
-    return new Point();
+    return new Point(x, y);
   }
 }
