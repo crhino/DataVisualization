@@ -2,16 +2,19 @@
 class MyCircle {
   int x, y, radius;
   int r, g, b, value;
+  
+  boolean isGray;
+  
+  int defaultRed, defaultGreen, defaultBlue;/////////////////////////////////
+  
   String label;
   
   public MyCircle(int _x, int _y, int _radius, String _label, int _value) {
       setPosition (_x, _y, _radius);
-      setColor (250, 250, 250);
+      setDefaultColor (255, 255, 255);
       setLabel (_label);
       value = _value;
-      r = 255;
-      g = 255;
-      b = 255;
+      isGray = false;
   }
   
   public int getX() {
@@ -26,6 +29,21 @@ class MyCircle {
       x = _x;
       y = _y;
       radius = _radius;
+  }
+  
+  public void grayOut(){
+    isGray = true;
+  }
+  
+  public void addColor(){
+    isGray = false;
+  }
+  
+  public void setDefaultColor (int _r, int _g, int _b) {
+      defaultRed = _r;
+      defaultGreen = _g; 
+      defaultBlue = _b;
+      setColor(_r, _g, _b);
   }
   
   public void setColor (int _r, int _g, int _b) {
@@ -45,14 +63,7 @@ class MyCircle {
   public int getRadius() {return radius;}
   
   public boolean isBounded () {
-    float dist = sqrt((mouseX - x) * (mouseX - x) + (mouseY - y) * (mouseY - y));
-    
-    if (dist > radius) {
-      return false;
-    }
-    else {
-      return true;
-    }      
+    return dist(mouseX, mouseY, x, y) <= radius;     
   }
   
   public void render() {
