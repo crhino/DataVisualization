@@ -1,8 +1,11 @@
 class Network{
   MyNode nodes[];
+  MyNode treeNodes[];////////////////////////////////
   int r,g,b;
 
   MyParser s;
+  
+  MyParser t;
   
   String nodeID;
   
@@ -12,15 +15,17 @@ class Network{
 
   public Network(){
     s = new MyParser("stoich_matrix.csv");
-    rxns = new MyParser("composition_small.csv");
+    rxns = new MyParser("module_composition2.csv");
     colors = new MyParser("colormap.csv");
+    t = new MyParser("module_connectivity.csv");
     nodeID = "7221";
     
     reactions = new String[rxns.values.length - 1];
     
     nodes = new MyNode[reactions.length];
     for(int i = 0; i < nodes.length; i++){
-      MyCircle c = new MyCircle(int(random(width)),int(random(height)),10,"",-1);
+      MyCircle c = new MyCircle(int(random(width*.9)+int(width*.05)),
+                                int(random(height*.7) + int(width * .05)),10,"",-1);
       int red, green, blue;
       String rxnType;
       nodes[i] = new MyNode(rxns.getValue(i + 1, 0), c);
@@ -63,21 +68,40 @@ class Network{
       reactions[i] = rxns.getValue(i,0);
     }
     
+    for(int i = 0; i < nodes.length; i++){
+      nodes[i].circle.grayOut();
+    }
+    
     for(int i = 0; i < rxns.getRowLength(0); i++){
       if(rxns.getValue(0,i).equals(nodeID)){
         for(int j = 1; j < rxns.getNumItems(); j++){
-          
+          String rxn = rxns.getValue(j,i);
+          for(int k = 0; k < nodes.length; k++){
+            if(nodes[k].getID().equals(rxn)){
+              nodes[k].circle.addColor();
+            }
+          }
         }
       }
     }
   }
 
   void drawEdges(){
-    stroke(r,g,b);
+    stroke(0,0,0);
     for(int i = 0; i < nodes.length; i++){
       for(int j = 0; j < nodes[i].children.size(); j++){
+        if(nodes[i].circle.isBounded() || ((MyNode)nodes[i].children.get(j)).circle.isBounded()){
+          stroke(0,200,0);
+        }
+        if(nodes[i].circle.isGray || ((MyNode)nodes[i].children.get(j)).circle.isGray){
+          stroke(180,180,180);
+          if(nodes[i].circle.isBounded() || ((MyNode)nodes[i].children.get(j)).circle.isBounded()){
+            stroke(180,255,180);
+          }
+        }
         line(nodes[i].circle.x, nodes[i].circle.y,
              ((MyNode)nodes[i].children.get(j)).circle.x, ((MyNode)nodes[i].children.get(j)).circle.y);
+        stroke(0,0,0);
       }
     }
     stroke(0,0,0);
@@ -98,10 +122,16 @@ class Network{
         mouseover = true;
         nodes[i].circle.setColor(min(255, red+100), min(255, green+100), 
                                  min(255, blue+100));
+        if(nodes[i].circle.isGray){
+          nodes[i].circle.setColor(200, 200, 200);          
+        }
         nodes[i].render();
       }
       else{
         nodes[i].circle.setColor(red, green, blue);
+        if(nodes[i].circle.isGray){
+          nodes[i].circle.setColor(150, 150, 150);          
+        }
         nodes[i].render();
       }
     }
@@ -109,6 +139,7 @@ class Network{
     for(int i = 0; i < nodes.length; i++){
       if(nodes[i].isBounded() && !mouseover)
       {
+        mouseover = true;
         fill(255, 255, 255);
         rect(mouseX, mouseY - 20, textWidth(nodes[i].getID()), 20);
         fill(0, 0, 0);
