@@ -203,14 +203,15 @@ class Network{
         nodes[i].circle.setColorV(min(255, red+100), min(255, green+100), 
                                  min(255, blue+100), 255);
         if(nodes[i].circle.isGray){
-          nodes[i].circle.setColorV(200, 200, 200, 200);          
+          nodes[i].circle.setColorV(min(255, red+100), min(255, green+100), 
+                                 min(255, blue+100), 210);          
         }
         nodes[i].render();
       }
       else{
         nodes[i].circle.setColorV(red, green, blue, 255);
         if(nodes[i].circle.isGray){
-          nodes[i].circle.setColorV(150, 150, 150, 150);          
+          nodes[i].circle.setColorV(red, green, blue, 50);          
         }
         nodes[i].render();
       }
