@@ -11,9 +11,6 @@ class Tree {
     root = new MyNode(c.getValue(1, 2), null, new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
     addChildren(root, c);
     current = root;
-    
-    ArrayList temp = root.children;
-    current = (MyNode) temp.get(0);
   }
   
   //Recursive function that finds and adds children of node.
@@ -128,11 +125,9 @@ class Tree {
     Point point;
     int count = 0;
     Boolean remove = false;
-    println ("Node ID: " + node.id);
     ArrayList children = node.children;
-    if(node.parent != null) { println("HAS PARENT");
+    if(node.parent != null) {
       if(node.parent.visited == false) {
-        println("INSIDE");
         remove = true;
         children.add(node.parent);
       }
@@ -144,7 +139,6 @@ class Tree {
     float radianspace = (radianend - radianstart)/(children.size()-count);
     float theta = radianstart + radianspace/2;
     count = 0;
-    //println("Radian field: " + radianspace);
     for(int i = 0; i < children.size(); i++) {
       temp = (MyNode) children.get(i);
       if(temp.visited) {
@@ -159,9 +153,7 @@ class Tree {
       theta = theta + radianspace;
     }
     if(remove) {
-    println("SIZE: " + children.size());
     children.remove(node.parent);
-    println("SIZE: " + children.size());
     }
     node.render();
   }
