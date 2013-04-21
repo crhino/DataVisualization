@@ -1,0 +1,48 @@
+
+
+Tree mytree;
+MyParser parentChild;
+MyParser moduleReport;
+MyParser composition;
+
+MyController control;
+
+void setup() {
+  size(800, 800);
+
+  parentChild = new MyParser("day4parentchild1.csv");
+  moduleReport = new MyParser("day4modulereport.csv");
+  composition = new MyParser("day4composition.csv");
+
+  mytree = new Tree();
+  mytree.createTree(parentChild);
+
+  MyDetails initTree = new MyDetails();
+  control = new MyController();
+
+  initTree.initializeNode(mytree.root, moduleReport, composition);
+
+  mytree.printT();
+}
+
+void draw() {
+  background(255, 255, 255);
+  mytree.drawConCircles();
+  mytree.render();
+  if (control.showingBox) {
+    control.renderBox();
+  }
+  control.showInfo(mytree.root);
+}
+
+
+
+void mouseClicked() {
+  if (control.showingBox) {
+    control.buttonIsect();
+  }
+  control.run(mytree.root);
+}
+
+
+
