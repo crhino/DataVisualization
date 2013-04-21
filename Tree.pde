@@ -104,7 +104,10 @@ class Tree {
   }
   
   public void resetVisited(MyNode node) {
-    if(node.leaf) return;
+    if(node.leaf) {
+      node.setVisited(true);
+      return;
+    }
     node.setVisited(false);
     ArrayList temp = node.children;
     for(int i = 0; i < temp.size(); i++) {
@@ -120,12 +123,25 @@ class Tree {
   }
 
   private void renderTree (MyNode node, float radianstart, float radianend, int nodedist) {
-    if (node.leaf) return;
+    if (node.leaf && node.visited) return;
     node.setVisited(true);
     MyNode temp;
     Point point;
     int count = 0;
     Boolean remove = false;
+    float radianspace, theta;
+    if(node.collapsed) {
+      if(node.parent != null && node.parent.visited != true) {
+        radianspace = radianend - radianstart;
+        theta = radianspace + radianspace/2;
+        point = makeRay (width/2, height/2, nodedist, theta);
+        node.parent.setPos(point.x, point.y);
+        line(node.getX(), node.getY(), temp.getX(), temp.getY());
+        node.parent.render();
+        renderTree(node.parent, radianstart, radianend, nodedist);
+      }
+     return;
+    }
     ArrayList children = node.children;
     if(node.parent != null) {
       if(node.parent.visited == false) {
@@ -137,8 +153,8 @@ class Tree {
       temp = (MyNode) children.get(i);
       if(temp.visited) count++;
     }
-    float radianspace = (radianend - radianstart)/(children.size()-count);
-    float theta = radianstart + radianspace/2;
+    radianspace = (radianend - radianstart)/(children.size()-count);
+    theta = radianstart + radianspace/2;
     count = 0;
     for(int i = 0; i < children.size(); i++) {
       temp = (MyNode) children.get(i);
