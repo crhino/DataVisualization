@@ -1,14 +1,14 @@
 class Tree {
   MyNode root;
   MyNode current;
-  int circledist = 50;
+  int circledist = 40;
   
   public Tree () {
 
   }
   //Creates the tree heirarchy.
   public void createTree(MyParser c) {
-    root = new MyNode(c.getValue(1, 2), null, new MyCircle (0, 0, 10, c.getValue(1, 2), 0));
+    root = new MyNode(c.getValue(1, 2), null, new MyCircle (0, 0, 15, c.getValue(1, 2), 0));
     addChildren(root, c);
     current = root;
   }
@@ -25,7 +25,7 @@ class Tree {
     for (int i = 0; i < c.getRowLength(0); i++) {
       if (c.getValue(row, i).equals("1")) {
         leaf = false;
-        temp = new MyNode (c.getValue(1, i), node, new MyCircle (0, 0, 10, c.getValue(1, i), 0));
+        temp = new MyNode (c.getValue(1, i), node, new MyCircle (0, 0, 15, c.getValue(1, i), 0));
         node.add_Child(temp);
         addChildren (temp, c);
       }
@@ -60,6 +60,8 @@ class Tree {
       temp = new MyCircle (width/2, height/2, circledist*(10-i), "", 0);
       temp.render();
     }
+    temp = new MyCircle (width/2, height/2, 10, "", 0);
+    temp.render();
   }
   
   public void setCurrent() {
@@ -111,11 +113,10 @@ class Tree {
   }
 
   public void render () {
-    current.setPos(width/2, height/2, 5);
+    current.setPos(width/2, height/2);
     root.setColor(0, 0, 200);
     renderTree(current, 0, 2*PI, circledist);
     resetVisited(root);
-    println("START:");
   }
 
   private void renderTree (MyNode node, float radianstart, float radianend, int nodedist) {
@@ -146,7 +147,7 @@ class Tree {
         continue;
       }
       point = makeRay (width/2, height/2, nodedist, theta);
-      temp.setPos(point.x, point.y, 5);
+      temp.setPos(point.x, point.y);
       line(node.getX(), node.getY(), temp.getX(), temp.getY());
       temp.render();
       renderTree (temp, radianstart+((i-count)*radianspace), radianstart + ((i-count+1)*radianspace), nodedist+circledist);
