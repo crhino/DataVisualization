@@ -33,6 +33,13 @@ class MyCircle {
       g = _g; 
       b = _b;
   }
+
+  public void setColorV (int _r, int _g, int _b, int _v) {
+      r = _r;
+      g = _g; 
+      b = _b;
+      value = _v;
+  }
  
   public void setLabel (String _label) {
      label = _label;
