@@ -1,13 +1,109 @@
-//more details may be addes later, homogeneity index, cycles, if it gets a red line?, etc.
-class details{
-//
-  int numReactions;
 
-//reaction classification proportions
+
+//more details may be addes later, homogeneity index, cycles, if it gets a red line?, etc.
+class MyDetails {
+  //  get from module report
+  float numReactions;
+  float avgShred;
+
+  //reaction classification proportions
   float EC_transport;
   float carbMetab;
   float TCA_oxphos;
   float citrateMalate;
   float lipidMetab;
   float aminoAcidMetab;
+
+
+  public MyDetails() {
+    this.EC_transport = 0;
+    this.carbMetab = 0;
+    this.TCA_oxphos = 0;
+    this.citrateMalate = 0;
+    this.lipidMetab = 0;
+    this.aminoAcidMetab = 0;
+  }
+
+  //traverses the tree to add details to each node
+  //called after tree parent chilren nodes have been laid out and leaf nodes have information
+
+  public void initializeNode(MyNode node, MyParser moduleReport, MyParser moduleComp) {
+    moduleReport(moduleReport, node);  //so far only sets module report
+    moduleComposition(moduleComp, node);
+
+    if (node.leaf) {
+      return;
+    }
+    for (int i = 0; i < node.children.size(); i++) {
+      MyNode child = (MyNode) node.children.get(i);
+      initializeNode(child, moduleReport, moduleComp);
+    }
+  }
+
+  //gets composition called by intialization details
+  //public moduleComposition(MyParser composition, MyNode node){
+  //}
+
+  //traverse module report, places number of reactions into given node 
+  private void moduleReport(MyParser moduleReport, MyNode node) {
+    String id = node.id;
+    println(id);
+    for (int i = 1; i < moduleReport.numItems; i++) {
+      if (id.equals(moduleReport.getValue(i, 0))) {
+        node.details.numReactions = float(moduleReport.getValue(i, 1));
+        node.details.avgShred = float(moduleReport.getValue(i, 8));
+        break;
+      }
+    }
+  }
+
+
+
+//MAKE MORE GENERAL 
+  private void moduleComposition(MyParser composition, MyNode node) {
+    float ectCount = 0; 
+    float carbmCount = 0;
+    float citratemCount = 0;
+    float tcaCount = 0;
+    float lmCount = 0; 
+    float aamCount = 0;
+
+    float total = node.details.numReactions;
+
+
+    for (int i = 0; i < composition.getRowLength(0); i++) {
+      if (node.id.equals(composition.getValue(0, i))) {
+        for (int j = 0; j < total; j++) {
+          String type = composition.getValue(j, i+1);
+          if (type.equals("Extracellular_Transport")) { 
+            ectCount++;
+          } 
+          else if (type.equals("Carbohydrate Metabolism")) { 
+            carbmCount++;
+          }
+          else if (type.equals("TCA_Oxphos")) { 
+            tcaCount++;
+          } 
+          else if (type.equals("Citrate_Malate")) {  
+            citratemCount++;
+          } 
+          else if (type.equals("Lipid Metabolism")) { 
+            lmCount++;
+          } 
+          else if (type.equals("Amino Acid Metabolism")) { 
+            aamCount++;
+          }
+        }
+      }
+    }
+
+    node.details.EC_transport = ectCount/total;
+    node.details.carbMetab = carbmCount/total;
+    node.details. TCA_oxphos = tcaCount/total;
+    node.details. citrateMalate = citratemCount/total;
+    node.details. lipidMetab = lmCount/total;
+    node.details. aminoAcidMetab = aamCount/total;
+    
+    println(node.id + " ec trans " + node.details.EC_transport);
+  }
 }
