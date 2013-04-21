@@ -153,14 +153,35 @@ class Network{
           stroke(0,200,0);
         }
         if(nodes[i].circle.isGray || ((MyNode)nodes[i].children.get(j)).circle.isGray){
-          stroke(180,180,180);
+          stroke(210,210,210);
           if(nodes[i].circle.isBounded() || ((MyNode)nodes[i].children.get(j)).circle.isBounded()){
             stroke(180,255,180);
           }
         }
         line(nodes[i].circle.x, nodes[i].circle.y,
-             ((MyNode)nodes[i].children.get(j)).circle.x, ((MyNode)nodes[i].children.get(j)).circle.y);
+             ((MyNode)nodes[i].children.get(j)).circle.x,
+             ((MyNode)nodes[i].children.get(j)).circle.y);
         stroke(0,0,0);
+      }
+    }
+    for(int i = 0; i < nodes.length; i++){
+      for(int j = 0; j < nodes[i].children.size(); j++){
+        if(!nodes[i].circle.isGray && !((MyNode)nodes[i].children.get(j)).circle.isGray){
+          line(nodes[i].circle.x, nodes[i].circle.y,
+               ((MyNode)nodes[i].children.get(j)).circle.x,
+               ((MyNode)nodes[i].children.get(j)).circle.y);
+        }        
+      }
+    }
+    for(int i = 0; i < nodes.length; i++){
+      for(int j = 0; j < nodes[i].children.size(); j++){
+        if(nodes[i].circle.isBounded() && !nodes[i].circle.isGray &&
+           !((MyNode)nodes[i].children.get(j)).circle.isGray){
+          stroke(0,200,0);
+          line(nodes[i].circle.x, nodes[i].circle.y,
+               ((MyNode)nodes[i].children.get(j)).circle.x,
+               ((MyNode)nodes[i].children.get(j)).circle.y);
+        }        
       }
     }
     stroke(0,0,0);
