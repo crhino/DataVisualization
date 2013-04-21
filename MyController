@@ -2,6 +2,7 @@
 class MyController {
   MyNode chosen;
   boolean buttons;
+  boolean showingBox;
 
   float boxX;
   float boxY;
@@ -18,6 +19,7 @@ class MyController {
 
   public MyController() {
     this.buttons = false;
+    this.showingBox = false;
 
     this.boxX = 20;
     this.boxY = 20;
@@ -37,10 +39,10 @@ class MyController {
   void run(MyNode start) {
     this.chosen = highlight(start);
     if (this.chosen != null) {
-      this.buttons = true;
+      this.showingBox = true;
     }
     else if (this.chosen == null) {
-      this.buttons = false;
+      this.showingBox = false;
     }
   }
 
@@ -90,7 +92,7 @@ class MyController {
       this.chosen.collapse = false;
       return;
     }
-    if (buttonIsect(this.centerY)) {
+    if (buttonIsect(this.centerY) && this.chosen != null) {
       println("center pressed");
       mytree.center(this.chosen);
     }
@@ -104,4 +106,44 @@ class MyController {
     }
     return false;
   }
+
+
+  void showInfo(MyNode start) {
+    MyNode chosen = highlight(start);
+    if (chosen != null) {
+      fill(150, 150, 150, 220);
+      noStroke();
+      rect(mouseX, mouseY - 200, 220, 200, 8); ///box
+      fill(255);
+      textAlign(LEFT);
+      text("ID: " + chosen.id, mouseX + 5, mouseY - 150, 90, 20);
+      text("Size: " + chosen.details.numReactions, mouseX + 5, mouseY - 135, 190, 20);
+      if(!chosen.leaf){
+        text("Avg Shred: " + chosen.details.avgShred, mouseX + 5, mouseY - 120, 190, 20);
+       // text("Extracelluar Transport: " + chosen.details.EC_transport, mouseX + 5, mouseY - 105, 190, 30);
+       text("Extracellular Transport: " + chosen.details.EC_transport + 
+       "\nCarbohydrate Metabolism: " + chosen.details.carbMetab + 
+       "\nTCA Oxphos: " + chosen.details.TCA_oxphos + 
+       "\nCitrate Malate: " + chosen.details.citrateMalate + 
+       "\nLipid Metabolism: " + chosen.details.lipidMetab + 
+       "\nAmino Acid Metabolism: " + chosen.details.aminoAcidMetab, mouseX + 5, mouseY - 105, 210, 80);
+      }
+      
+      
+     // text(s, 10, 10, 70, 80);  // Text wraps within text box
+
+    }
+  }
 }
+
+
+//
+//  float avgShred;
+//
+//  //reaction classification proportions
+//  float EC_transport;
+//  float carbMetab;
+//  float TCA_oxphos;
+//  float citrateMalate;
+//  float lipidMetab;
+//  float aminoAcidMetab;
