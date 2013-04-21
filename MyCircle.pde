@@ -5,10 +5,14 @@ class MyCircle {
   String label;
   
   public MyCircle(int _x, int _y, int _radius, String _label, int _value) {
-      setPosition (_x, _y, _radius);
-      setColor (255, 255, 255);
+      setPosition (_x, _y);
+      radius = _radius;
+      setColor (250, 250, 250);
       setLabel (_label);
       value = _value;
+      r = 255;
+      g = 255;
+      b = 255;
   }
   
   public int getX() {
@@ -19,10 +23,9 @@ class MyCircle {
     return y;
   }
   
-  public void setPosition (int _x, int _y, int _radius) {
+  public void setPosition (int _x, int _y) {
       x = _x;
       y = _y;
-      radius = _radius;
   }
   
   public void setColor (int _r, int _g, int _b) {
@@ -42,7 +45,14 @@ class MyCircle {
   public int getRadius() {return radius;}
   
   public boolean isBounded () {
-    return dist(mouseX, mouseY, x, y) <= radius;     
+    float dist = sqrt((mouseX - x) * (mouseX - x) + (mouseY - y) * (mouseY - y));
+    
+    if (dist > radius) {
+      return false;
+    }
+    else {
+      return true;
+    }      
   }
   
   public void render() {
