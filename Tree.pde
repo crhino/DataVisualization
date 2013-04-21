@@ -105,7 +105,7 @@ class Tree {
   
   public void resetVisited(MyNode node) {
     if(node.leaf) {
-      node.setVisited(true);
+      node.setVisited(false);
       return;
     }
     node.setVisited(false);
