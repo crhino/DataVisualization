@@ -193,6 +193,11 @@ class Network{
     fill(200,0,0);
     boolean mouseover = false;
     for(int i = 0; i < nodes.length; i++){
+      MyCircle white = new MyCircle(nodes[i].circle.x, nodes[i].circle.y,
+                                    10,"",255);
+      white.render();
+    }
+    for(int i = 0; i < nodes.length; i++){
       int red = nodes[i].circle.defaultRed;
       int green = nodes[i].circle.defaultGreen;
       int blue = nodes[i].circle.defaultBlue;
