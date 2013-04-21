@@ -126,6 +126,19 @@ class Network{
     }
   }
   
+  boolean checkOverlap(MyNode n, int index, ArrayList otherNodes){
+    boolean intersected = false;
+    for(int i = 0; i < otherNodes.size(); i++){
+      if(i != index){
+        MyNode n2 = (MyNode)otherNodes.get(i);
+        if(dist(n.circle.x, n.circle.y, n2.circle.x, n2.circle.y) < 20){
+          intersected = true;
+        }
+      }
+    }
+    return intersected;
+  }
+  
   void placeNodes(){
     for(int i = 0; i < clusters.size(); i++){
       ArrayList currentCluster = (ArrayList)clusters.get(i);
@@ -133,13 +146,22 @@ class Network{
       int centerY = int(random(height*.7) + int(width * .05));
       if(((ArrayList)clusters.get(i)).size() == 1){
         ((MyNode)(currentCluster.get(0))).setPos(centerX,centerY,10);
-      }
+      }      
       else{
         for(int j = 0; j < currentCluster.size(); j++){
           MyNode currentNode = (MyNode)currentCluster.get(j);
-          ((MyNode)(currentCluster.get(j))).setPos(centerX +
-                    int(random(20 * currentCluster.size())),
-                    centerY + int(random(20 * currentCluster.size())),10);
+          float radians = random(2 * PI);
+          int radius = int(random(20 * currentCluster.size()));
+          int x = int(centerX+radius*cos(radians));
+          int y = int(centerY+radius*sin(radians));
+          currentNode.setPos(x,y,10);
+          while(checkOverlap(currentNode, j, currentCluster)){
+              radians = random(2 * PI);
+              radius = int(random(20 * currentCluster.size()));
+              x = int(centerX+radius*cos(radians));
+              y = int(centerY+radius*sin(radians));
+              currentNode.setPos(x,y,10);
+          }
         }
       }
     }
@@ -150,7 +172,7 @@ class Network{
     for(int i = 0; i < nodes.length; i++){
       for(int j = 0; j < nodes[i].children.size(); j++){
         if(nodes[i].circle.isBounded() || ((MyNode)nodes[i].children.get(j)).circle.isBounded()){
-          stroke(0,200,0);
+          stroke(0,120,0);
         }
         if(nodes[i].circle.isGray || ((MyNode)nodes[i].children.get(j)).circle.isGray){
           stroke(210,210,210);
