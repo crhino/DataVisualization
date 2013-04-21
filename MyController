@@ -1,0 +1,107 @@
+
+class MyController {
+  MyNode chosen;
+  boolean buttons;
+
+  float boxX;
+  float boxY;
+  float boxWidth;
+  float boxHeight;
+
+  float buttonx;
+  float collapseY;
+  float expandY;
+  float centerY;
+
+  float buttonHeight;
+  float buttonWidth;
+
+  public MyController() {
+    this.buttons = false;
+
+    this.boxX = 20;
+    this.boxY = 20;
+    this.boxWidth = 200;
+    this.boxHeight = 200;
+
+    this.buttonHeight = 30;
+    this.buttonWidth = this.boxWidth - 20;
+
+    this.buttonx = this.boxX + 10;
+    this.collapseY = this.boxY + 10;
+    this.expandY = this.boxY + 20 + this.buttonHeight;
+    this.centerY = this.boxY + 30 + 2*this.buttonHeight;
+  }
+
+
+  void run(MyNode start) {
+    this.chosen = highlight(start);
+    if (this.chosen != null) {
+      this.buttons = true;
+    }
+    else if (this.chosen == null) {
+      this.buttons = false;
+    }
+  }
+
+
+
+  MyNode highlight(MyNode start) {
+    if (start.circle.isBounded()) {
+      return start;
+    }
+    if (!start.leaf) {
+      for (int i = 0; i < start.children.size(); i++) {
+        if (highlight((MyNode)start.children.get(i)) != null) {
+          return highlight((MyNode) start.children.get(i));
+        }
+      }
+    }
+    return null;
+  }
+
+  void renderBox() {
+    fill(150, 150, 150, 220);
+    noStroke();
+    rect(this.boxX, this.boxY, this.boxWidth, this.boxHeight, 8);  //main control square
+
+    fill(100);
+    rect(this.buttonx, this.collapseY, this.buttonWidth, this.buttonHeight, 8);
+    rect(this.buttonx, this.expandY, this.buttonWidth, this.buttonHeight, 8);
+    rect(this.buttonx, this.centerY, this.buttonWidth, this.buttonHeight, 8);
+
+    fill(255);
+    textSize(15);
+    text("COLLAPSE", .5*(this.boxWidth + this.boxX), this.boxY + this.buttonHeight);
+    text("EXPAND", .5*(this.boxWidth + this.boxX), this.boxY + 2*this.buttonHeight + 10);
+    text("CENTER", .5*(this.boxWidth + this.boxX), this.boxY + 3*this.buttonHeight + 20);
+    text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 3*this.buttonHeight);
+    if (this.chosen != null) {
+      text("CHOSEN NODE: " + this.chosen.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 4*this.buttonHeight);
+    }
+  }
+
+  void buttonIsect() {
+    if (buttonIsect(this.collapseY)) {
+      println("collapse");
+      this.chosen.collapse = true;
+    }
+    if (buttonIsect(this.expandY) && (this.chosen.collapse)) {
+      this.chosen.collapse = false;
+      return;
+    }
+    if (buttonIsect(this.centerY)) {
+      println("center pressed");
+      mytree.center(this.chosen);
+    }
+  }
+
+  boolean buttonIsect(float _y) {
+    float xDist = mouseX - this.buttonx; 
+    float yDist = mouseY - _y;
+    if ((xDist < this.buttonWidth) && (yDist < this.buttonHeight) && (xDist > 0) && (yDist > 0)) {
+      return true;
+    }
+    return false;
+  }
+}
