@@ -1,8 +1,15 @@
 
+
+
+
+
+///have some way to indicate that it is collapse/expanded
 class MyController {
-  MyNode chosen;
+  MyNode hover;
+  MyNode selectedNode;
+
   boolean buttons;
-  boolean showingBox;
+  boolean showingBox; //state of showing the control box
 
   float boxX;
   float boxY;
@@ -37,16 +44,31 @@ class MyController {
 
 
   void run(MyNode start) {
-    this.chosen = highlight(start);
-    if (this.chosen != null) {
+
+    this.hover = highlight(start);
+    if (this.hover != null) {
+      this.selectedNode = this.hover;
+    }
+    //open box
+    if (this.hover != null && this.showingBox == false) {
       this.showingBox = true;
     }
-    else if (this.chosen == null) {
+
+    //close box
+    else if (this.hover == null && this.showingBox == true && this.boxIsect() == false) {
       this.showingBox = false;
     }
   }
+  
 
-
+  boolean boxIsect() {
+    float xDist = mouseX - this.boxX; 
+    float yDist = mouseY - this.boxY;
+    if ((xDist < this.boxWidth) && (yDist < this.boxHeight) && (xDist > 0) && (yDist > 0)) {
+      return true;
+    }
+    return false;
+  }
 
   MyNode highlight(MyNode start) {
     if (start.circle.isBounded()) {
@@ -74,27 +96,28 @@ class MyController {
 
     fill(255);
     textSize(15);
+    textAlign(CENTER);
     text("COLLAPSE", .5*(this.boxWidth + this.boxX), this.boxY + this.buttonHeight);
     text("EXPAND", .5*(this.boxWidth + this.boxX), this.boxY + 2*this.buttonHeight + 10);
     text("CENTER", .5*(this.boxWidth + this.boxX), this.boxY + 3*this.buttonHeight + 20);
     text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 3*this.buttonHeight);
-    if (this.chosen != null) {
-      text("CHOSEN NODE: " + this.chosen.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 4*this.buttonHeight);
-    }
+    text("SELECTED NODE: " + this.selectedNode.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 4*this.buttonHeight);
   }
 
   void buttonIsect() {
     if (buttonIsect(this.collapseY)) {
       println("collapse");
-      this.chosen.collapse = true;
+      if (this.selectedNode != mytree.current) {
+        this.selectedNode.collapse = true;
+      }
     }
-    if (buttonIsect(this.expandY) && (this.chosen.collapse)) {
-      this.chosen.collapse = false;
+    if (buttonIsect(this.expandY) && (this.selectedNode.collapse)) {
+      this.selectedNode.collapse = false;
       return;
     }
-    if (buttonIsect(this.centerY) && this.chosen != null) {
+    if (buttonIsect(this.centerY)) {
       println("center pressed");
-      mytree.center(this.chosen);
+      mytree.center(this.selectedNode);
     }
   }
 
@@ -109,41 +132,29 @@ class MyController {
 
 
   void showInfo(MyNode start) {
-    MyNode chosen = highlight(start);
-    if (chosen != null) {
+    MyNode hover = highlight(start);
+    if (hover != null) {
+      float _width = hover.details.textboxWidth + 10;
+      float _y;
+      float _x;
       fill(150, 150, 150, 220);
       noStroke();
-      rect(mouseX, mouseY - 200, 220, 200, 8); ///box
+      _x = mouseX;
+      _y = mouseY;
+      if (mouseX > width - _width) {
+        _x = mouseX - _width;
+      }
+      if (mouseY < 200) {
+        _y = mouseY + 200;
+      }
+      rect(_x, _y - 200, _width, 200, 8);
       fill(255);
       textAlign(LEFT);
-      text("ID: " + chosen.id, mouseX + 5, mouseY - 150, 90, 20);
-      text("Size: " + chosen.details.numReactions, mouseX + 5, mouseY - 135, 190, 20);
-      if(!chosen.leaf){
-        text("Avg Shred: " + chosen.details.avgShred, mouseX + 5, mouseY - 120, 190, 20);
-       // text("Extracelluar Transport: " + chosen.details.EC_transport, mouseX + 5, mouseY - 105, 190, 30);
-       text("Extracellular Transport: " + chosen.details.EC_transport + 
-       "\nCarbohydrate Metabolism: " + chosen.details.carbMetab + 
-       "\nTCA Oxphos: " + chosen.details.TCA_oxphos + 
-       "\nCitrate Malate: " + chosen.details.citrateMalate + 
-       "\nLipid Metabolism: " + chosen.details.lipidMetab + 
-       "\nAmino Acid Metabolism: " + chosen.details.aminoAcidMetab, mouseX + 5, mouseY - 105, 210, 80);
-      }
-      
-      
-     // text(s, 10, 10, 70, 80);  // Text wraps within text box
-
+      textSize(12);
+      text("ID: " + hover.id + '\n' + hover.details.labels[0]  + '\n' + hover.details.labels[1] + '\n'+ hover.details.labels[2] +
+        '\n' + hover.details.labels[3] + '\n' + hover.details.labels[4] + '\n' + hover.details.labels[5] + '\n' + hover.details.labels[6] + '\n' +
+        hover.details.labels[7], _x + 5, _y - 195, _width, 200);
     }
   }
 }
 
-
-//
-//  float avgShred;
-//
-//  //reaction classification proportions
-//  float EC_transport;
-//  float carbMetab;
-//  float TCA_oxphos;
-//  float citrateMalate;
-//  float lipidMetab;
-//  float aminoAcidMetab;
