@@ -5,31 +5,67 @@ class MyDetails {
   //  get from module report
   float numReactions;
   float avgShred;
+  boolean leaf;
+  
+  boolean oneClass;
+  int oneLabel;
 
   //reaction classification proportions
-  float EC_transport;
-  float carbMetab;
-  float TCA_oxphos;
-  float citrateMalate;
-  float lipidMetab;
-  float aminoAcidMetab;
+ // ArrayList classes[];
+  float class1;
+  float class2;
+  float class3;
+  float class4;
+  float class5;
+  float class6;
+  String labels[];
+
+  float textboxWidth; 
 
 
   public MyDetails() {
-    this.EC_transport = 0;
-    this.carbMetab = 0;
-    this.TCA_oxphos = 0;
-    this.citrateMalate = 0;
-    this.lipidMetab = 0;
-    this.aminoAcidMetab = 0;
+    this.class1 = 0;
+    this.class2 = 0;
+    this.class3 = 0;
+    this.class4 = 0;
+    this.class5 = 0;
+    this.class6 = 0;
+    this.leaf = false;
+    this.textboxWidth = 0;
   }
+
+
+  void makeStrings(MyDetails nodeDetails) {
+    nodeDetails.labels = new String[8];
+    nodeDetails.labels[0] = "Size: " + nodeDetails.numReactions;
+    nodeDetails.labels[1] = "Avg Shred: " + nodeDetails.avgShred;
+    nodeDetails.labels[2] = "Carbohydrate Metabolism: " + nodeDetails.class2 + "%";
+    nodeDetails.labels[3] = "Citrate Malate: " + nodeDetails.class4 + "%";
+    nodeDetails.labels[4] = "Extracellular Transport: " + nodeDetails.class1 + "%";
+    nodeDetails.labels[5] = "TCA Oxphos: " + nodeDetails.class3 + "%";
+    nodeDetails.labels[6] = "Lipid Metabolism: " + nodeDetails.class5 + "%";
+    nodeDetails.labels[7] = "Amino Acid Metabolism: " + nodeDetails.class6 +"%";
+    
+    for (int i = 0; i < 8 ; i++) {
+      if (textWidth(nodeDetails.labels[i]) > nodeDetails.textboxWidth) {
+        nodeDetails.textboxWidth = textWidth(nodeDetails.labels[i]);
+      }
+    }
+  }
+
 
   //traverses the tree to add details to each node
   //called after tree parent chilren nodes have been laid out and leaf nodes have information
 
   public void initializeNode(MyNode node, MyParser moduleReport, MyParser moduleComp) {
+    if (node.leaf) {
+      node.details.leaf = true;
+    }
     moduleReport(moduleReport, node);  //so far only sets module report
     moduleComposition(moduleComp, node);
+    makeStrings(node.details);
+
+    // printThings(node);
 
     if (node.leaf) {
       return;
@@ -40,14 +76,17 @@ class MyDetails {
     }
   }
 
-  //gets composition called by intialization details
-  //public moduleComposition(MyParser composition, MyNode node){
-  //}
+
+
+  void printThings(MyNode node) {
+    println(node.id);
+    println("    " + node.details. class1 + "  " + node.details.class2 + " " + node.details.class3 + " " + node.details.class4 +
+      " " + node.details.class5 + " " + node.details.class6);
+  }
 
   //traverse module report, places number of reactions into given node 
   private void moduleReport(MyParser moduleReport, MyNode node) {
     String id = node.id;
-    println(id);
     for (int i = 1; i < moduleReport.numItems; i++) {
       if (id.equals(moduleReport.getValue(i, 0))) {
         node.details.numReactions = float(moduleReport.getValue(i, 1));
@@ -59,51 +98,49 @@ class MyDetails {
 
 
 
-//MAKE MORE GENERAL 
+  //MAKE MORE GENERAL 
   private void moduleComposition(MyParser composition, MyNode node) {
-    float ectCount = 0; 
-    float carbmCount = 0;
-    float citratemCount = 0;
-    float tcaCount = 0;
-    float lmCount = 0; 
-    float aamCount = 0;
+    float class1Count= 0; 
+    float class2Count = 0;
+    float class4Count = 0;
+    float class3Count = 0;
+    float class5Count = 0; 
+    float class6Count = 0;
 
     float total = node.details.numReactions;
 
-
     for (int i = 0; i < composition.getRowLength(0); i++) {
       if (node.id.equals(composition.getValue(0, i))) {
-        for (int j = 0; j < total; j++) {
+        for (int j = 1; j < total+1; j++) {
           String type = composition.getValue(j, i+1);
           if (type.equals("Extracellular_Transport")) { 
-            ectCount++;
+            class1Count++;
           } 
           else if (type.equals("Carbohydrate Metabolism")) { 
-            carbmCount++;
+            class2Count++;
           }
-          else if (type.equals("TCA_Oxphos")) { 
-            tcaCount++;
+          else if (type.equals("class3")) { 
+            class3Count++;
           } 
           else if (type.equals("Citrate_Malate")) {  
-            citratemCount++;
+            class4Count++;
           } 
           else if (type.equals("Lipid Metabolism")) { 
-            lmCount++;
+            class5Count++;
           } 
           else if (type.equals("Amino Acid Metabolism")) { 
-            aamCount++;
+            class6Count++;
           }
         }
       }
     }
 
-    node.details.EC_transport = ectCount/total;
-    node.details.carbMetab = carbmCount/total;
-    node.details. TCA_oxphos = tcaCount/total;
-    node.details. citrateMalate = citratemCount/total;
-    node.details. lipidMetab = lmCount/total;
-    node.details. aminoAcidMetab = aamCount/total;
+    node.details.class1 = (class1Count/total)*100;
+    node.details.class2 = (class2Count/total)*100;
+    node.details.class3 = (class3Count/total)*100;
+    node.details.class4 = (class4Count/total)*100;
+    node.details.class5 = (class5Count/total)*100;
+    node.details.class6 = (class6Count/total)*100;
     
-    println(node.id + " ec trans " + node.details.EC_transport);
   }
 }
