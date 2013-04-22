@@ -1,40 +1,68 @@
+
 class MyNode {
+
+  boolean collapse;
+  MyDetails details;
   
   ArrayList children = new ArrayList();
-  ArrayList edges = new ArrayList();
+  MyNode parent;
   String id;
   MyCircle circle;
   Boolean leaf;
-  
-  public MyNode (String ID, MyCircle circ) {
+  Boolean visited;
+ 
+
+  public MyNode (String ID, MyNode p, MyCircle circ) {
+    parent = p;
     id = ID;
     circle = circ;
     leaf = false;
+    visited = false;
+    details = new MyDetails();
   }
-  
-  public String getID () {return id;}
 
-  public void isLeaf() {leaf = true;}
-  
+  public String getID () {
+    return id;
+  }
+
+  public void isLeaf() {
+    leaf = true;
+  }
+
+  public void setVisited(Boolean b) {
+    visited = b;
+  }
+
   public void add_Child (MyNode node) {
     children.add(node);
   }
-  
-  public void setPos(int x, int y, int r) {
-    circle.setPosition(x, y, r);
+
+  public void setPos(int x, int y) {
+    circle.setPosition(x, y, circle.radius);
   }
-  
+
   public void setColor(int r, int g, int b) {
     circle.setColor(r, g, b);
   }
-  
+
   public void render() {
+    strokeWeight(1);
+    stroke(255);
     circle.render();
   }
-  
-  public ArrayList get_Children() {return children;}
-  
-  public ArrayList getEdges() {return edges;}
+
+  public int getX() {
+    return circle.getX();
+  }
+
+  public int getY() {
+    return circle.getY();
+  }
+
+  public ArrayList get_Children() {
+    return children;
+  }
+
   public Boolean isBounded() {
     return circle.isBounded();
   }
