@@ -4,6 +4,9 @@ Tree mytree;
 MyParser parentChild;
 MyParser moduleReport;
 MyParser composition;
+MyParser colormap;
+
+MyDetails initTree;
 
 MyController control;
 
@@ -13,14 +16,20 @@ void setup() {
   parentChild = new MyParser("day4parentchild1.csv");
   moduleReport = new MyParser("day4modulereport.csv");
   composition = new MyParser("day4composition.csv");
+  colormap = new MyParser("day4colormap.csv");
 
   mytree = new Tree();
   mytree.createTree(parentChild);
 
-  MyDetails initTree = new MyDetails();
-  control = new MyController();
+ initTree = new MyDetails(colormap);
+  control = new MyController(initTree.labels, initTree.textBoxWidth);
 
   initTree.initializeNode(mytree.root, moduleReport, composition);
+  
+  
+    mytree.root.setColor(100, 100, 100);
+    mytree.root.circle.radius = 30;
+  
 
   mytree.printT();
 }
