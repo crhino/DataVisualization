@@ -4,6 +4,11 @@
 
 
 ///have some way to indicate that it is collapse/expanded
+
+//comparison box?
+
+//way to filter
+
 class MyController {
   MyNode hover;
   MyNode selectedNode;
@@ -11,7 +16,7 @@ class MyController {
   boolean buttons;
   boolean showingBox; //state of showing the control box
 
-  float boxX;
+    float boxX;
   float boxY;
   float boxWidth;
   float boxHeight;
@@ -20,18 +25,25 @@ class MyController {
   float collapseY;
   float expandY;
   float centerY;
+  float filterY;
 
   float buttonHeight;
   float buttonWidth;
 
-  public MyController() {
+  ArrayList labels;
+  float textBoxWidth;
+
+
+  public MyController(ArrayList initTreeLabels, float textBox) {
+    this.labels = initTreeLabels;
     this.buttons = false;
     this.showingBox = false;
+    this.textBoxWidth = textBox + 5;
 
     this.boxX = 20;
     this.boxY = 20;
     this.boxWidth = 200;
-    this.boxHeight = 200;
+    this.boxHeight = 250;
 
     this.buttonHeight = 30;
     this.buttonWidth = this.boxWidth - 20;
@@ -40,6 +52,7 @@ class MyController {
     this.collapseY = this.boxY + 10;
     this.expandY = this.boxY + 20 + this.buttonHeight;
     this.centerY = this.boxY + 30 + 2*this.buttonHeight;
+    this.filterY = this.boxY + 40 + 3*this.buttonHeight;
   }
 
 
@@ -47,7 +60,11 @@ class MyController {
 
     this.hover = highlight(start);
     if (this.hover != null) {
+      if (this.selectedNode != null) {
+        this.selectedNode.selected = false;
+      }
       this.selectedNode = this.hover;
+      this.selectedNode.selected = true;
     }
     //open box
     if (this.hover != null && this.showingBox == false) {
@@ -57,9 +74,10 @@ class MyController {
     //close box
     else if (this.hover == null && this.showingBox == true && this.boxIsect() == false) {
       this.showingBox = false;
+      this.selectedNode.selected = false;
     }
   }
-  
+
 
   boolean boxIsect() {
     float xDist = mouseX - this.boxX; 
@@ -93,6 +111,7 @@ class MyController {
     rect(this.buttonx, this.collapseY, this.buttonWidth, this.buttonHeight, 8);
     rect(this.buttonx, this.expandY, this.buttonWidth, this.buttonHeight, 8);
     rect(this.buttonx, this.centerY, this.buttonWidth, this.buttonHeight, 8);
+    rect(this.buttonx, this.filterY, this.buttonWidth, this.buttonHeight, 8);
 
     fill(255);
     textSize(15);
@@ -100,8 +119,10 @@ class MyController {
     text("COLLAPSE", .5*(this.boxWidth + this.boxX), this.boxY + this.buttonHeight);
     text("EXPAND", .5*(this.boxWidth + this.boxX), this.boxY + 2*this.buttonHeight + 10);
     text("CENTER", .5*(this.boxWidth + this.boxX), this.boxY + 3*this.buttonHeight + 20);
-    text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 3*this.buttonHeight);
-    text("SELECTED NODE: " + this.selectedNode.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 50 + 4*this.buttonHeight);
+    text("FILTER", .5*(this.boxWidth + this.boxX), this.boxY + 4*this.buttonHeight + 30);
+
+    text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 6*this.buttonHeight);
+    text("SELECTED NODE: " + this.selectedNode.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 7*this.buttonHeight);
   }
 
   void buttonIsect() {
@@ -119,6 +140,10 @@ class MyController {
       println("center pressed");
       mytree.center(this.selectedNode);
     }
+    if (buttonIsect(this.filterY)) {
+      println("filter");
+      this.filterNodes(mytree.root);
+    }
   }
 
   boolean buttonIsect(float _y) {
@@ -131,30 +156,67 @@ class MyController {
   }
 
 
+
   void showInfo(MyNode start) {
     MyNode hover = highlight(start);
+
     if (hover != null) {
-      float _width = hover.details.textboxWidth + 10;
+      //node with just one reaction type;
+      float _x = mouseX + 5;
       float _y;
-      float _x;
-      fill(150, 150, 150, 220);
-      noStroke();
-      _x = mouseX;
-      _y = mouseY;
-      if (mouseX > width - _width) {
-        _x = mouseX - _width;
+      float _height;
+      if (hover.details.oneType) {
+        _y = mouseY - 105;
+        if (mouseX > (width - hover.details.textBoxWidth)) {
+          _x = mouseX - hover.details.textBoxWidth - 5;
+        }
+        if (mouseY < (height - 105)) {
+          _y = mouseY - 105;
+        }
+
+        fill(150, 150, 150, 220);
+        noStroke();
+        rect(_x, _y, hover.details.textBoxWidth, 100, 9);
+
+        fill(255);
+        textSize(12);
+        textAlign(LEFT);
+        text("ID: " + hover.id + "\nSize: " + hover.details.numReactions + 
+          "\n" + hover.details.oneClass + " 100%", _x + 5, _y + 3, hover.details.textBoxWidth, 100);
       }
-      if (mouseY < 200) {
-        _y = mouseY + 200;
+      //node with more than one reaction type 
+      else {
+        _x = mouseX + 5;
+        _y = mouseY - 100;
+        if (mouseX > (width - this.textBoxWidth)) {
+          _x = mouseX - this.textBoxWidth - 5;
+        }
+        if (mouseY < (height - 100)) {
+          _y = mouseY - 100;
+        }
+
+        fill(150, 150, 150, 220);
+        noStroke();
+        rect(_x, _y, this.textBoxWidth + 5, 100, 9);
+
+        fill(255);
+        textSize(12);
+        textAlign(LEFT);
+        text("ID: " + hover.id + "  Size: " + hover.details.numReactions, _x + 5, _y + 15);
+        float curr_height = _y + 25;
+        for (int i = 0; i < this.labels.size(); i++) {
+          text((String) this.labels.get(i) + ": " + hover.details.proportions[i] + "%" , _x + 5, curr_height);
+          curr_height = curr_height + 14;
+        }
       }
-      rect(_x, _y - 200, _width, 200, 8);
-      fill(255);
-      textAlign(LEFT);
-      textSize(12);
-      text("ID: " + hover.id + '\n' + hover.details.labels[0]  + '\n' + hover.details.labels[1] + '\n'+ hover.details.labels[2] +
-        '\n' + hover.details.labels[3] + '\n' + hover.details.labels[4] + '\n' + hover.details.labels[5] + '\n' + hover.details.labels[6] + '\n' +
-        hover.details.labels[7], _x + 5, _y - 195, _width, 200);
     }
   }
-}
 
+
+
+
+  ////FILTERING 
+
+  void filterNodes(MyNode start) {
+  }
+}
