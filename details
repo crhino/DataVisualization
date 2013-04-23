@@ -2,70 +2,60 @@
 
 //more details may be addes later, homogeneity index, cycles, if it gets a red line?, etc.
 class MyDetails {
-  //  get from module report
+  ArrayList labels;  //this is a list of strings
+  float[] proportions;  //this is a list of numbers
+ color[] colors;
+
   float numReactions;
   float avgShred;
-  boolean leaf;
+  float textBoxWidth;
+  boolean oneType;
+  String oneClass;
   
-  boolean oneClass;
-  int oneLabel;
-
-  //reaction classification proportions
- // ArrayList classes[];
-  float class1;
-  float class2;
-  float class3;
-  float class4;
-  float class5;
-  float class6;
-  String labels[];
-
-  float textboxWidth; 
+  String nodeID; 
 
 
+  //for ndoes
   public MyDetails() {
-    this.class1 = 0;
-    this.class2 = 0;
-    this.class3 = 0;
-    this.class4 = 0;
-    this.class5 = 0;
-    this.class6 = 0;
-    this.leaf = false;
-    this.textboxWidth = 0;
   }
 
 
-  void makeStrings(MyDetails nodeDetails) {
-    nodeDetails.labels = new String[8];
-    nodeDetails.labels[0] = "Size: " + nodeDetails.numReactions;
-    nodeDetails.labels[1] = "Avg Shred: " + nodeDetails.avgShred;
-    nodeDetails.labels[2] = "Carbohydrate Metabolism: " + nodeDetails.class2 + "%";
-    nodeDetails.labels[3] = "Citrate Malate: " + nodeDetails.class4 + "%";
-    nodeDetails.labels[4] = "Extracellular Transport: " + nodeDetails.class1 + "%";
-    nodeDetails.labels[5] = "TCA Oxphos: " + nodeDetails.class3 + "%";
-    nodeDetails.labels[6] = "Lipid Metabolism: " + nodeDetails.class5 + "%";
-    nodeDetails.labels[7] = "Amino Acid Metabolism: " + nodeDetails.class6 +"%";
+  //for functioning
+  public MyDetails(MyParser colormap) {
+    int rows = colormap.getNumItems();
+
+    this.labels = new ArrayList(rows);
+
+    for (int i = 1; i < rows; i++) {
+      this.labels.add(colormap.getValue(i, 0));
+    }
     
-    for (int i = 0; i < 8 ; i++) {
-      if (textWidth(nodeDetails.labels[i]) > nodeDetails.textboxWidth) {
-        nodeDetails.textboxWidth = textWidth(nodeDetails.labels[i]);
+    this.colors = new color[rows];
+    for(int i = 1; i < rows; i++){
+      this.colors[i-1] = color(int(colormap.getValue(i, 1)), int(colormap.getValue(i, 2)), int(colormap.getValue(i, 3)));
+    }
+    
+    this.textBoxWidth = 0; 
+    for(int i = 0; i < this.labels.size(); i++){
+      if(this.textBoxWidth  < textWidth((String) this.labels.get(i)) + textWidth(": 123.4567")){
+        this.textBoxWidth = textWidth((String) this.labels.get(i)) + textWidth(": 123.4567");
       }
     }
+    
+    println(this.textBoxWidth);
+ 
+ 
+ 
   }
+  
+  
 
-
-  //traverses the tree to add details to each node
-  //called after tree parent chilren nodes have been laid out and leaf nodes have information
+  
 
   public void initializeNode(MyNode node, MyParser moduleReport, MyParser moduleComp) {
-    if (node.leaf) {
-      node.details.leaf = true;
-    }
-    moduleReport(moduleReport, node);  //so far only sets module report
-    moduleComposition(moduleComp, node);
-    makeStrings(node.details);
-
-    // printThings(node);
+    moduleReportInit(node, moduleReport);  //so far only sets module report
+    moduleCompInit(node, moduleComp);
+    check1reaction(node);
 
     if (node.leaf) {
       return;
@@ -77,18 +67,10 @@ class MyDetails {
   }
 
 
-
-  void printThings(MyNode node) {
-    println(node.id);
-    println("    " + node.details. class1 + "  " + node.details.class2 + " " + node.details.class3 + " " + node.details.class4 +
-      " " + node.details.class5 + " " + node.details.class6);
-  }
-
-  //traverse module report, places number of reactions into given node 
-  private void moduleReport(MyParser moduleReport, MyNode node) {
-    String id = node.id;
+  private void moduleReportInit(MyNode node, MyParser moduleReport) {
+    node.details.nodeID = node.id;
     for (int i = 1; i < moduleReport.numItems; i++) {
-      if (id.equals(moduleReport.getValue(i, 0))) {
+      if (node.id.equals(moduleReport.getValue(i, 0))) {
         node.details.numReactions = float(moduleReport.getValue(i, 1));
         node.details.avgShred = float(moduleReport.getValue(i, 8));
         break;
@@ -97,50 +79,47 @@ class MyDetails {
   }
 
 
+  private void moduleCompInit(MyNode node, MyParser moduleComp) {
+    node.details.proportions = new float[this.labels.size()];
+    for (int i = 0; i < this.labels.size(); i++) {
+      node.details.proportions[i] = 0;
+    }
 
-  //MAKE MORE GENERAL 
-  private void moduleComposition(MyParser composition, MyNode node) {
-    float class1Count= 0; 
-    float class2Count = 0;
-    float class4Count = 0;
-    float class3Count = 0;
-    float class5Count = 0; 
-    float class6Count = 0;
-
-    float total = node.details.numReactions;
-
-    for (int i = 0; i < composition.getRowLength(0); i++) {
-      if (node.id.equals(composition.getValue(0, i))) {
-        for (int j = 1; j < total+1; j++) {
-          String type = composition.getValue(j, i+1);
-          if (type.equals("Extracellular_Transport")) { 
-            class1Count++;
-          } 
-          else if (type.equals("Carbohydrate Metabolism")) { 
-            class2Count++;
-          }
-          else if (type.equals("class3")) { 
-            class3Count++;
-          } 
-          else if (type.equals("Citrate_Malate")) {  
-            class4Count++;
-          } 
-          else if (type.equals("Lipid Metabolism")) { 
-            class5Count++;
-          } 
-          else if (type.equals("Amino Acid Metabolism")) { 
-            class6Count++;
+    for (int i = 0; i < moduleComp.getRowLength(0); i++) {
+      if (node.id.equals(moduleComp.getValue(0, i))) {
+        for (int j = 1; j < node.details.numReactions + 1; j++) {
+          String type = moduleComp.getValue(j, i+1);          
+          for (int k = 0; k < this.labels.size(); k++) {
+            if (type.equals((String) this.labels.get(k))) {
+              node.details.proportions[k]++;
+            }
           }
         }
       }
     }
 
-    node.details.class1 = (class1Count/total)*100;
-    node.details.class2 = (class2Count/total)*100;
-    node.details.class3 = (class3Count/total)*100;
-    node.details.class4 = (class4Count/total)*100;
-    node.details.class5 = (class5Count/total)*100;
-    node.details.class6 = (class6Count/total)*100;
-    
+    for (int i = 0; i < this.labels.size(); i++) {
+      node.details.proportions[i] = (node.details.proportions[i]/node.details.numReactions)*100;
+    }
   }
+
+  private void check1reaction(MyNode node) {
+    node.setColor(170, 170, 170);
+    for (int i = 0; i < this.labels.size(); i++) {
+      if (node.details.proportions[i] == 100.0) {
+        node.details.oneType = true;
+        node.details.oneClass = (String) this.labels.get(i);
+        node.details.textBoxWidth = textWidth(node.details.oneClass + ": 123.4567");
+        node.setColor(int(red(int(this.colors[i]))), int(green(int(this.colors[i]))), int(blue(int(this.colors[i]))));
+        return;
+      }
+    }
+  }
+  
+  
+  
+
+  
+  
+  
 }
