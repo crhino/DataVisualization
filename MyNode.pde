@@ -3,14 +3,15 @@ class MyNode {
 
   boolean collapse;
   MyDetails details;
-  
+  boolean selected;
+
   ArrayList children = new ArrayList();
   MyNode parent;
   String id;
   MyCircle circle;
   Boolean leaf;
   Boolean visited;
- 
+
 
   public MyNode (String ID, MyNode p, MyCircle circ) {
     parent = p;
@@ -40,14 +41,18 @@ class MyNode {
   public void setPos(int x, int y) {
     circle.setPosition(x, y, circle.radius);
   }
-
+  
   public void setColor(int r, int g, int b) {
     circle.setColor(r, g, b);
   }
 
   public void render() {
-    strokeWeight(1);
     stroke(255);
+    strokeWeight(1);
+    if(this.selected){
+      stroke(255, 0, 255);
+      strokeWeight(3);
+    }
     circle.render();
   }
 
