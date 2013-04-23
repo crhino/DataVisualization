@@ -3,9 +3,6 @@ class Tree {
   MyNode current;
   int circledist = 50;
   
-  color rootColor = color(0, 0, 238);
-  color moduleColor = color(0, 191, 255);
-  
   
   public Tree () {
 
@@ -13,8 +10,6 @@ class Tree {
   //Creates the tree heirarchy.
   public void createTree(MyParser c) {
     root = new MyNode(c.getValue(1, 2), null, new MyCircle (0, 0, 15, c.getValue(1, 2), 0));
-    
-    root.setColor(0, 0, 238);
     
     addChildren(root, c);
     current = root;
@@ -28,7 +23,7 @@ class Tree {
   }
   //////
   
-  
+
   
   
   //Recursive function that finds and adds children of node.
@@ -45,7 +40,7 @@ class Tree {
         leaf = false;
         temp = new MyNode (c.getValue(1, i), node, new MyCircle (0, 0, 15, c.getValue(1, i), 0));
         
-        temp.setColor(0, 191, 255);
+//        temp.setColor(0, 191, 255);
         
         node.add_Child(temp);
         addChildren (temp, c);
@@ -135,7 +130,7 @@ class Tree {
 
   public void render () {
     current.setPos(width/2, height/2);
-    root.setColor(0, 0, 200);
+//    root.setColor(0, 0, 200);
     renderTree(current, 0, 2*PI, circledist);
     resetVisited(root);
     //println("START:");
@@ -193,6 +188,7 @@ class Tree {
       
       strokeWeight(2);
       stroke(200);
+      
       line(node.getX(), node.getY(), temp.getX(), temp.getY());
       temp.render();
       renderTree (temp, radianstart+((i-count)*radianspace), radianstart + ((i-count+1)*radianspace), nodedist+circledist);
