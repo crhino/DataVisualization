@@ -12,6 +12,8 @@
 class MyController {
 
   boolean stateTree;
+  
+  float filterProportion;
 
   boolean comparingModules;
   boolean showingBox;       //state of showing the control box
@@ -35,6 +37,7 @@ class MyController {
   float expandY;
   float centerY;
   float filterY;
+  float compareY;
 
   float buttonHeight;
   float buttonWidth;
@@ -73,6 +76,8 @@ class MyController {
     this.expandY = this.boxY + 20 + this.buttonHeight;
     this.centerY = this.boxY + 30 + 2*this.buttonHeight;
     this.filterY = this.boxY + 40 + 3*this.buttonHeight;
+    this.compareY = this.boxY + 50 + 4*this.buttonHeight;
+
 
     this.highlighter = new color[3];
     this.highlighter[0] = color(173, 255, 47);
@@ -82,6 +87,15 @@ class MyController {
 
   ///normal render functin that is called in draw, checks for normal show info interaction and renders the box yes no?
   void render(MyNode start) {
+    if(this.comparingModules){
+      fill(0);
+    }
+    else {
+      fill(100, 255, 200);
+    }
+    rect(300, 300, 100, 100);
+    
+    
     //state 1 -- if the info box has been called, renders the info box  and box isect to check for button interaction. 
     this.showInfo(start);
     if (this.showingBox) {
@@ -91,9 +105,17 @@ class MyController {
     //state 2 -- if comparing modules, calls compare modules and continuously adds things to highlight array 
     if (this.comparingModules) {
       this.compare();
+      this.showCompare();
     }
   }
 
+
+  void clearCompareNodes(){
+       int total = this.compareNodes.size();
+      for(int i = 0; i < total; i++){
+        this.compareNodes.remove(0);
+      }
+  }
 
   ///called when mouse is clicked
   void click(Tree mytree) {
@@ -117,8 +139,12 @@ class MyController {
       this.showingBox = false;
       this.selectedNode.selected = false;
       this.comparingModules = false;
-    }
+      this.clearCompareNodes();
 
+    }
+    else if (this.hover != null && this.comparingModules){
+      this.compareNodes.add(this.selectedNode);
+    }
 
     ///if info box is up, calls button interactions. 
     if (this.showingBox) {
@@ -167,11 +193,14 @@ class MyController {
     rect(this.buttonx, this.collapseY, this.buttonWidth, this.buttonHeight, 8);
     rect(this.buttonx, this.expandY, this.buttonWidth, this.buttonHeight, 8);
     rect(this.buttonx, this.centerY, this.buttonWidth, this.buttonHeight, 8);
-    
-    if(this.comparingModules){
-      fill(50);
-    }
+    rect(this.buttonx, this.compareY, this.buttonWidth, this.buttonHeight, 8);
     rect(this.buttonx, this.filterY, this.buttonWidth, this.buttonHeight, 8);
+
+
+
+    
+    
+    
 
     fill(255);
     textSize(15);
@@ -179,10 +208,12 @@ class MyController {
     text("COLLAPSE", .5*(this.boxWidth + this.boxX), this.boxY + this.buttonHeight);
     text("EXPAND", .5*(this.boxWidth + this.boxX), this.boxY + 2*this.buttonHeight + 10);
     text("CENTER", .5*(this.boxWidth + this.boxX), this.boxY + 3*this.buttonHeight + 20);
-    text("COMPARE", .5*(this.boxWidth + this.boxX), this.boxY + 4*this.buttonHeight + 30);
+    text("FILTER", .5*(this.boxWidth + this.boxX), this.boxY + 4*this.buttonHeight + 30);
+    text("COMPARE", .5*(this.boxWidth + this.boxX), this.boxY + 5*this.buttonHeight + 40);
 
-    text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 6*this.buttonHeight);
-    text("SELECTED NODE: " + this.selectedNode.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 7*this.buttonHeight);
+
+    text("CLICK OFF TO CLOSE BOX", .5*(this.boxWidth + this.boxX + 10), this.boxY + 7*this.buttonHeight);
+    text("SELECTED NODE: " + this.selectedNode.id, .5*(this.boxWidth + this.boxX + 10), this.boxY + 8*this.buttonHeight);
   }
 
   void buttonIsect(Tree tree) {
@@ -200,20 +231,23 @@ class MyController {
       println("center pressed");
       tree.setCenter(this.selectedNode);
     }
-    if (buttonIsect(this.filterY)) {
+    if (buttonIsect(this.compareY)) {
       this.comparingModules = true;
+    }
+    
+    if(buttonIsect(this.filterY)){
     }
   }
 
 
   void compare() {
     println(this.compareNodes.size());
-    if (this.compareNodes.size() == 3) {
-      println(compareNodes.size() + " NO MORE HIGHLIGHT");
+    if (this.compareNodes.size() == 4) {
+      println(compareNodes.size() + " NO MORE HIGHLIGHT");      
       this.comparingModules = false;
+      this.clearCompareNodes();
       return;
     }
-    this.compareNodes.add(this.selectedNode);
     this.selectedNode.compare = true;
   }
 
@@ -278,11 +312,21 @@ class MyController {
     }
   }
 
+   
 
+  
 
 
   ////FILTERING ????????????????????
 
-  void filterNodes(MyNode start) {
+  void filterNodes(MyNode start, String reaction) {
+    
+       
+    
+    
+    
+    
+    
+    
   }
 }
