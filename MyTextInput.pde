@@ -4,8 +4,9 @@ class MyTextInput {
   String label;
   int value;
   Boolean selected;
+  MyController control;
   
-  public MyTextInput(int _x, int _y, int __width, int __height, String _label, int _value) {
+  public MyTextInput(int _x, int _y, int __width, int __height, String _label, int _value, MyController c) {
     x = _x;
     y = _y;
     _width = __width;
@@ -15,6 +16,7 @@ class MyTextInput {
     r = 255;
     g = 255;
     b = 255;
+    control = c;
     selected = false;
   }
   
@@ -77,7 +79,7 @@ class MyTextInput {
           break;
         case ENTER:
         case RETURN:
-          // put call to filter function here.
+          control.filter(label);
           break;
         case ESC:
         case DELETE:
