@@ -61,30 +61,29 @@ class MyTextInput {
   }
   
   void mouseClicked() {
-    if(textInput.isBounded(mouseX, mouseY)) textInput.setSelected(true);
-    else textInput.setSelected(false);
+    if(isBounded(mouseX, mouseY)) textInput.setSelected(true);
+    else setSelected(false);
   }
   
   void keyReleased() {
-    if (textInput.isSelected()) {
+    if (isSelected()) {
     if (key != CODED) {
       switch(key) {
         case BACKSPACE:
-          textInput.label = textInput.label.substring(0,max(0,textInput.label.length()-1));
+          label = label.substring(0,max(0,label.length()-1));
           break;
         case TAB:
-          textInput.label += "    ";
+          label += "    ";
           break;
         case ENTER:
         case RETURN:
-          // comment out the following two lines to disable line-breaks
-          //textInput.label += "\n";
+          // put call to filter function here.
           break;
         case ESC:
         case DELETE:
           break;
         default:
-          textInput.label += key;
+          label += key;
       }
     }
     }
