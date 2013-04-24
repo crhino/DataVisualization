@@ -4,18 +4,24 @@
 class MyDetails {
   ArrayList labels;  //this is a list of strings
   float[] proportions;  //this is a list of numbers
- color[] colors;
+  color[] colors;
 
+
+///this is for nodes
   float numReactions;
   float avgShred;
   float textBoxWidth;
+  float textBoxHeight;
   boolean oneType;
   String oneClass;
   
+  float compareX;
+  float compareY;
+
   String nodeID; 
+  String information;
 
-
-  //for ndoes
+  //for nodes
   public MyDetails() {
   }
 
@@ -29,33 +35,28 @@ class MyDetails {
     for (int i = 1; i < rows; i++) {
       this.labels.add(colormap.getValue(i, 0));
     }
-    
+
     this.colors = new color[rows];
-    for(int i = 1; i < rows; i++){
+    for (int i = 1; i < rows; i++) {
       this.colors[i-1] = color(int(colormap.getValue(i, 1)), int(colormap.getValue(i, 2)), int(colormap.getValue(i, 3)));
     }
-    
+
     this.textBoxWidth = 0; 
-    for(int i = 0; i < this.labels.size(); i++){
-      if(this.textBoxWidth  < textWidth((String) this.labels.get(i)) + textWidth(": 123.4567")){
+    for (int i = 0; i < this.labels.size(); i++) {
+      if (this.textBoxWidth  < textWidth((String) this.labels.get(i)) + textWidth(": 123.4567")) {
         this.textBoxWidth = textWidth((String) this.labels.get(i)) + textWidth(": 123.4567");
       }
     }
-    
-    println(this.textBoxWidth);
- 
- 
- 
-  }
-  
-  
 
-  
+    println(this.textBoxWidth);
+  }
+
 
   public void initializeNode(MyNode node, MyParser moduleReport, MyParser moduleComp) {
-    moduleReportInit(node, moduleReport);  //so far only sets module report
-    moduleCompInit(node, moduleComp);
-    check1reaction(node);
+    this.moduleReportInit(node, moduleReport);  //so far only sets module report
+    this.moduleCompInit(node, moduleComp);
+    this.check1reaction(node);
+    node.details.information = this.makeInfoString(node);
 
     if (node.leaf) {
       return;
@@ -105,20 +106,61 @@ class MyDetails {
 
   private void check1reaction(MyNode node) {
     node.setColor(170, 170, 170);
+    node.details.textBoxWidth = this.textBoxWidth;
+    node.details.textBoxHeight = 175;
     for (int i = 0; i < this.labels.size(); i++) {
       if (node.details.proportions[i] == 100.0) {
         node.details.oneType = true;
         node.details.oneClass = (String) this.labels.get(i);
         node.details.textBoxWidth = textWidth(node.details.oneClass + ": 123.4567");
         node.setColor(int(red(int(this.colors[i]))), int(green(int(this.colors[i]))), int(blue(int(this.colors[i]))));
+        node.details.textBoxHeight = 60;
         return;
       }
     }
   }
-  
-  
-  
 
+
+  String makeInfoString(MyNode node) {
+    if (node.details.oneType) {
+      String text = "ID: " + node.details.nodeID + " Size: " + node.details.numReactions + "\n" + node.details.oneClass + " 100%";
+      return text;
+    }
+    String text = "ID: " + node.id + " Size: " + node.details.numReactions + "\nAvgShred: " + node.details.avgShred;
+    for (int i = 0; i < this.labels.size(); i++) {
+      text = text + "\n" + (String) this.labels.get(i) + ": " + node.details.proportions[i] + " %";
+    }
+    return text;
+  }
+
+  //called by individual node
+  void renderInfoBox(float x, float y) {
+    this.compareX = x;
+    this.compareY = y;
+    if(this.isect(this.compareX, this.compareY) && mousePressed){
+        this.compareX = mouseX;
+        this.compareY = mouseY;
+    }
+
+    fill(150, 150, 150, 220);
+    rect(this.compareX, this.compareY, this.textBoxWidth, this.textBoxHeight, 9);
+    fill(255);
+    textSize(12);
+    textAlign(LEFT);
+    text(this.information, this.compareX + 5, this.compareY + 3, this.textBoxWidth, this.textBoxHeight);
+  }
+
+  boolean isect(float x, float y) {
+   
+    float xDist = mouseX - x; 
+    float yDist = mouseY - y;
+    
+    if ((xDist < this.textBoxWidth) && (yDist < this.textBoxHeight) && (xDist > 0) && (yDist > 0)) {
+      return true;
+    }
+    return false;
+  }
+  
   
   
   
