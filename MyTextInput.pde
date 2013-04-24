@@ -79,7 +79,7 @@ class MyTextInput {
           break;
         case ENTER:
         case RETURN:
-          control.filter(label);
+          control.filterNodes(label);
           break;
         case ESC:
         case DELETE:
