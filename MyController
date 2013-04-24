@@ -1,7 +1,6 @@
 
 
 
-
 ///have some way to indicate that it is collapse/expanded
 
 //comparison box?   you can have like 3....
@@ -322,16 +321,37 @@ class MyController {
   
 
 
-  ////FILTERING ????????????????????
+  ////FILTERING ???????????????????? ADDED 6:15
 
   void filterNodes(MyNode start, String reaction) {
-    
-       
-    
-    
-    
-    
-    
-    
+    int index = this.labels.size() + 1;
+    for (int i = 0; i < this.labels.size(); i++) {
+      if (reaction.equals((String) this.labels.get(i))) {
+        index = i;
+      }
+    }
+    if (index == this.labels.size() + 1) {
+      return;
+    }
+
+    filterHelp(start, index);
   }
+  
+  
+  
+
+  void filterHelp(MyNode node, int index) {
+    if (node.details.proportions[index] < this.filterProportion) {
+      node.filterOut = true;
+    }
+    if (node.leaf) {
+      return;
+    }
+    for (int i = 0; i < node.children.size(); i++) {
+      filterHelp((MyNode) node.children.get(i), index);
+    }
+  }
+
+
+
 }
