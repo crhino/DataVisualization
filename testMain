@@ -46,3 +46,7 @@ void draw() {
 void mouseClicked(){
   control.click(mytree);
 }
+
+void keyReleased() {
+  control.textInput.keyReleased();
+}
