@@ -51,6 +51,13 @@ class MyCircle {
       g = _g; 
       b = _b;
   }
+  
+  public void setColorV (int _r, int _g, int _b, int _v) {
+      r = _r;
+      g = _g; 
+      b = _b;
+      value = _v;
+  }
  
   public void setLabel (String _label) {
      label = _label;
@@ -63,12 +70,14 @@ class MyCircle {
   public int getRadius() {return radius;}
   
   public boolean isBounded () {
-    return dist(mouseX, mouseY, x, y) <= radius;     
+    return dist(mouseX, mouseY, x, y) <= radius;    
   }
   
   public void render() {
-    fill(r, g, b);
+    noStroke();
+    fill(r, g, b, value);
     ellipse(x, y, radius*2, radius*2);  
     fill(0);
+    stroke(0);
   } 
 }
