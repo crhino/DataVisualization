@@ -1,5 +1,4 @@
-
-
+///CHECK WHEN YOU HAVE CORE DUMP ALSO CANNOT MAKE LEAF NODE CENTER.
 Tree mytree;
 MyParser parentChild;
 MyParser moduleReport;
@@ -21,15 +20,15 @@ void setup() {
   mytree = new Tree();
   mytree.createTree(parentChild);
 
- initTree = new MyDetails(colormap);
-  control = new MyController(initTree.labels, initTree.textBoxWidth);
+  initTree = new MyDetails(colormap);
+  control = new MyController(initTree.labels, initTree.textBoxWidth, mytree.root);
 
   initTree.initializeNode(mytree.root, moduleReport, composition);
-  
-  
-    mytree.root.setColor(100, 100, 100);
-    mytree.root.circle.radius = 30;
-  
+
+
+  mytree.root.setColor(100, 100, 100);
+  mytree.root.circle.radius = 30;
+
 
   mytree.printT();
 }
@@ -38,20 +37,12 @@ void draw() {
   background(255, 255, 255);
   mytree.drawConCircles();
   mytree.render();
-  if (control.showingBox) {
-    control.renderBox();
-  }
-  control.showInfo(mytree.root);
+  control.render(mytree.root);
+
+
 }
 
 
-
-void mouseClicked() {
-  if (control.showingBox) {
-    control.buttonIsect();
-  }
-  control.run(mytree.root);
+void mouseClicked(){
+  control.click(mytree);
 }
-
-
-
