@@ -2,7 +2,6 @@
 
 
 
-
 ///have some way to indicate that it is collapse/expanded
 
 //comparison box?   you can have like 3....
@@ -19,6 +18,8 @@ class MyController {
   boolean showingBox;       //state of showing the control box
 
     boolean stateNetwork;
+
+  MyTextInput textInput;
 
   MyNode treeroot;
   MyNode hover;
@@ -78,6 +79,8 @@ class MyController {
     this.filterY = this.boxY + 40 + 3*this.buttonHeight;
     this.compareY = this.boxY + 50 + 4*this.buttonHeight;
 
+    textInput = new MyTextInput (buttonx, filterY, buttonWidth, buttonHeight, "", 0, this);
+
 
     this.highlighter = new color[3];
     this.highlighter[0] = color(173, 255, 47);
@@ -119,6 +122,7 @@ class MyController {
 
   ///called when mouse is clicked
   void click(Tree mytree) {
+    textInput.mouseClicked();
     this.hover = highlight(mytree.root);
     //
     if (this.hover != null) {  //the mouse is hovering over a 
@@ -236,6 +240,7 @@ class MyController {
     }
     
     if(buttonIsect(this.filterY)){
+      textInput.render();
     }
   }
 
