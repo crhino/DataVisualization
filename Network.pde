@@ -32,7 +32,7 @@ class Network{
     
     nodes = new MyNode[reactions.length];
     for(int i = 0; i < nodes.length; i++){
-      MyCircle c = new MyCircle(int(random(30)),int(random(30)),10,"",-1);
+      MyCircle c = new MyCircle(0,0,10,"",-1);
       reactions[i] = rxns.getValue(i+1,0);
       int red, green, blue;
       String rxnType;
@@ -146,11 +146,11 @@ class Network{
     Point currentPoints[] = new Point[clusters.size()];
     for(int i = 0; i < 200000; i++){
       for(int j = 0; j < clusters.size(); j++){
-        ArrayList currentCluster = (ArrayList)clusters.get(j);   
+        ArrayList currentCluster = (ArrayList)clusters.get(j);
         int centerX = int(random(width));
         int centerY = int(random(height));
-        while(centerX < 10 * currentCluster.size() || centerY < 10 * currentCluster.size() ||
-              centerX > width - (10 * currentCluster.size()) || centerY > height - (10 * currentCluster.size())){
+        while(centerX < 10 * currentCluster.size() + 10 || centerY < 10 * currentCluster.size() + 10 ||
+              centerX > width - (10 * currentCluster.size() - 10) || centerY > height - (10 * currentCluster.size()) - 10){
           centerX = int(random(width));
           centerY = int(random(height));
         }
@@ -178,7 +178,7 @@ class Network{
           }
         }
       }
-      if(noClustersAreTouching){println("!");
+      if(noClustersAreTouching){
         for(int j = 0; j < clusters.size(); j++){
           points[j] = currentPoints[j];
         }
@@ -288,18 +288,18 @@ class Network{
       if(nodes[i].isBounded() && !mouseover)
       {
         mouseover = true;
-        nodes[i].circle.setColorV(min(255, red+100), min(255, green+100), 
-                                 min(255, blue+100), 255);        
+        nodes[i].circle.setColorV(min(255, red+100), min(255, green+100),
+                                 min(255, blue+100), 255);
         if(nodes[i].circle.isFaded){
-          nodes[i].circle.setColorV(min(255, red+100), min(255, green+100), 
-                                 min(255, blue+100), 200);          
+          nodes[i].circle.setColorV(min(255, red+100), min(255, green+100),
+                                 min(255, blue+100), 200);
         }
         nodes[i].render();
       }
       else{
         nodes[i].circle.setColorV(red, green, blue, 255);
         if(nodes[i].circle.isFaded){
-          nodes[i].circle.setColorV(red, green, blue, 50);          
+          nodes[i].circle.setColorV(red, green, blue, 50);
         }
         nodes[i].render();
       }
@@ -309,11 +309,19 @@ class Network{
       if(nodes[i].isBounded() && !mouseover)
       {
         mouseover = true;
-        fill(255, 255, 255);
-        rect(mouseX, mouseY - 20, textWidth(nodes[i].getID()), 20);
-        fill(0, 0, 0);
-        text(nodes[i].getID(), mouseX, mouseY);
+        fill(120, 120, 120, 150);
+        if(mouseX > width - (textWidth(nodes[i].getID()) + 10)){
+          rect(mouseX - textWidth(nodes[i].getID()), mouseY - 20, textWidth(nodes[i].getID()) + 10, 30, 9);
+          fill(255, 255, 255);
+          text(nodes[i].getID(), (mouseX - textWidth(nodes[i].getID())) + 5, mouseY);
+        }
+        else{
+          rect(mouseX, mouseY - 20, textWidth(nodes[i].getID()) + 10, 30, 9);
+          fill(255, 255, 255);
+          text(nodes[i].getID(), mouseX + 5, mouseY);
+        }
       }
     }
+    highlightNodes();
   }
 }
