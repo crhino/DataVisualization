@@ -1,5 +1,4 @@
 
-
 //more details may be addes later, homogeneity index, cycles, if it gets a red line?, etc.
 class MyDetails {
   ArrayList labels;  //this is a list of strings
@@ -47,8 +46,6 @@ class MyDetails {
         this.textBoxWidth = textWidth((String) this.labels.get(i)) + textWidth(": 123.4567");
       }
     }
-
-    println(this.textBoxWidth);
   }
 
 
@@ -137,10 +134,6 @@ class MyDetails {
   void renderInfoBox(float x, float y) {
     this.compareX = x;
     this.compareY = y;
-    if(this.isect(this.compareX, this.compareY) && mousePressed){
-        this.compareX = mouseX;
-        this.compareY = mouseY;
-    }
 
     fill(150, 150, 150, 220);
     rect(this.compareX, this.compareY, this.textBoxWidth, this.textBoxHeight, 9);
