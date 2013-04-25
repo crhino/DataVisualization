@@ -1,0 +1,66 @@
+Tree mytree;
+Network network;
+MyRect switchbutton;
+boolean drawTree;
+
+MyParser parentChild;
+MyParser moduleReport;
+MyParser composition;
+MyParser colormap;
+
+MyDetails initTree;
+
+MyController control;
+
+void setup() {
+  size(2000, 1000);
+  drawTree = false;
+  switchbutton = new MyRect (1500, 50, 100, 30, "Switch", 0);
+  parentChild = new MyParser("parentchild.csv");
+  moduleReport = new MyParser("modulereport.csv");
+  composition = new MyParser("composition.csv");
+  colormap = new MyParser("colormap.csv");
+
+  mytree = new Tree();
+  mytree.createTree(parentChild);
+  
+  network = new Network ("stoichmatrix.csv", "composition.csv", "colormap.csv", 
+                  "parentchild.csv", mytree);
+
+  initTree = new MyDetails(colormap);
+  control = new MyController(initTree.labels, initTree.textBoxWidth, mytree.root, network);
+
+  initTree.initializeNode(mytree.root, moduleReport, composition);
+
+
+  mytree.root.setColor(100, 100, 100);
+  mytree.root.circle.radius = 30;
+}
+
+void draw() {
+  background(255, 255, 255);
+  if(drawTree) network.render();
+  else {
+    mytree.drawConCircles();
+    mytree.render();
+    control.render(mytree.root);
+  }
+  switchbutton.render();
+}
+
+
+void mouseClicked(){
+  if(switchbutton.isBounded(mouseX, mouseY)) {
+    if(drawTree) {
+      drawTree = false;
+    }
+    else {
+      drawTree = true;
+    }
+  }
+  control.click(mytree);
+}
+
+void keyReleased() {
+  control.textInput.keyReleased();
+}
