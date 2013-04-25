@@ -1,20 +1,18 @@
-
 class MyNode {
 
   boolean collapse;
   MyDetails details;
+  boolean selected;
+  boolean compare = false;
+  boolean filterOut = false;
 
-  
-  
   ArrayList children = new ArrayList();
   MyNode parent;
   String id;
   MyCircle circle;
   Boolean leaf;
   Boolean visited;
-  
- 
-  
+
 
   public MyNode (String ID, MyNode p, MyCircle circ) {
     parent = p;
@@ -42,18 +40,25 @@ class MyNode {
   }
 
   public void setPos(int x, int y) {
-    circle.setPosition(x, y, circle.radius);
+    circle.setPosition(x, y);
   }
-
+  
   public void setColor(int r, int g, int b) {
     circle.setColor(r, g, b);
   }
 
   public void render() {
-    stroke(0);
+    stroke(255);
+    strokeWeight(1);
+    if(this.selected){
+      stroke(255, 0, 255);
+      strokeWeight(3);
+    }
+    if(this.filterOut) {
+      circle.value = 20;
+    }
+    else circle.value = 500;
     circle.render();
-    textAlign(CENTER);
-    text(this.id, this.getX(), this.getY());
   }
 
   public int getX() {
