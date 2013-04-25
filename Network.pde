@@ -25,7 +25,7 @@ class Network{
     rxns = new MyParser(r);
     colors = new MyParser(rgb);
     connectivity = new MyParser(links);
-    nodeID = "7202";
+    nodeID = "7200";
     clusters = new ArrayList();
     
     reactions = new String[rxns.getNumItems() - 1];
