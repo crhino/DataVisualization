@@ -3,7 +3,8 @@ class MyTextInput {
   int r, g, b;
   String label;
   int value;
-  Boolean selected;
+  boolean selected;
+  boolean rendered;
   MyController control;
   
   public MyTextInput(int _x, int _y, int __width, int __height, String _label, int _value, MyController c) {
@@ -18,6 +19,7 @@ class MyTextInput {
     b = 255;
     control = c;
     selected = false;
+    rendered = false;
   }
   
   public void setColor(int _r, int _g, int _b) {
@@ -55,7 +57,8 @@ class MyTextInput {
   public void render () {
     fill(r, g, b);
     strokeWeight(2);
-    rect(x, y, _width, _height);
+    textAlign(LEFT);
+    rect(x, y, _width, _height, 9);
     fill(0, 0, 0);
     if(selected)
       text(label+(frameCount/10 % 2 == 0 ? "_" : ""), x +2, y + _height/1.5);
@@ -63,13 +66,14 @@ class MyTextInput {
   }
   
   void mouseClicked() {
-    if(isBounded(mouseX, mouseY)) textInput.setSelected(true);
+    if(isBounded(mouseX, mouseY)) setSelected(true);
     else setSelected(false);
   }
   
   void keyReleased() {
     if (isSelected()) {
     if (key != CODED) {
+      control.clearFilter(control.treeroot);
       switch(key) {
         case BACKSPACE:
           label = label.substring(0,max(0,label.length()-1));
@@ -79,7 +83,7 @@ class MyTextInput {
           break;
         case ENTER:
         case RETURN:
-          control.filterNodes(label);
+          control.filterNodes(control.treeroot, label);
           break;
         case ESC:
         case DELETE:
