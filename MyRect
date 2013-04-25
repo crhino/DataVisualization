@@ -1,0 +1,57 @@
+class MyRect {
+  int x, y, _width, _height;
+  int r, g, b;
+  String label;
+  int value;
+  
+  public MyRect(int _x, int _y, int __width, int __height, String _label, int _value) {
+    x = _x;
+    y = _y;
+    _width = __width;
+    _height = __height;
+    label = _label;
+    value = _value;
+    r = 150;
+    g = 150;
+    b = 150;
+  }
+  
+  public void setColor(int _r, int _g, int _b) {
+    r = _r;
+    g = _g;
+    b = _b; 
+  }
+  
+  public void setPos(int _x, int _y) {
+    x = _x;
+    y = _y;
+  }
+  
+  public String getLabel() {return label;}
+  
+  public int getValue() {return value;}
+  
+  public int getX() {return x;}
+  
+  public int getY() {return y;}
+  
+  public int getW() {return _width;}
+  
+  public int getH() {return _height;}
+  
+  public boolean isBounded (int _x, int _y) {
+    if(_x >= x && _y >= y && _x <= (_width + x) && _y <= (_height + y))
+      return true;
+    return false; 
+  }
+  
+  public void render () {
+    textSize(15);
+    fill(r, g, b);
+    stroke(0);
+    strokeWeight(2);
+    rect(x, y, _width, _height, 9);
+    fill(0, 0, 0);
+    text(label, x +_width/3, y + _height/1.5);
+  }
+}
